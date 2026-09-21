@@ -3,6 +3,7 @@
 from pathlib import Path
 
 import pandas as pd
+import matplotlib.pyplot as plt
 
 
 def print_survival_by(dataframe, column, title):
@@ -16,6 +17,68 @@ def print_survival_by(dataframe, column, title):
 
     print(f"\n{title}")
     print(summary.to_string())
+
+
+def save_survival_charts(dataframe, output_path):
+    """Crea y guarda las visualizaciones principales del análisis."""
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    # 1. Cantidad de sobrevivientes y no sobrevivientes.
+    survival_counts = dataframe["Survived"].map(
+        {0: "No sobrevivió", 1: "Sobrevivió"}
+    ).value_counts().reindex(["No sobrevivió", "Sobrevivió"])
+    plt.figure(figsize=(7, 5))
+    survival_counts.plot(kind="bar", color=["#d95f02", "#1b9e77"])
+    plt.title("Cantidad de sobrevivientes y no sobrevivientes")
+    plt.xlabel("Resultado")
+    plt.ylabel("Cantidad de pasajeros")
+    plt.xticks(rotation=0)
+    plt.tight_layout()
+    plt.savefig(output_path / "cantidad_supervivencia.png")
+    plt.close()
+
+    # 2. Tasa de supervivencia por sexo.
+    survival_by_sex = dataframe.groupby("Sex", observed=False)["Survived"].mean() * 100
+    plt.figure(figsize=(7, 5))
+    survival_by_sex.plot(kind="bar", color="#7570b3")
+    plt.title("Tasa de supervivencia por sexo")
+    plt.xlabel("Sexo")
+    plt.ylabel("Supervivencia (%)")
+    plt.ylim(0, 100)
+    plt.xticks(rotation=0)
+    plt.tight_layout()
+    plt.savefig(output_path / "supervivencia_por_sexo.png")
+    plt.close()
+
+    # 3. Tasa de supervivencia por clase.
+    survival_by_class = dataframe.groupby("Pclass", observed=False)["Survived"].mean() * 100
+    plt.figure(figsize=(7, 5))
+    survival_by_class.plot(kind="bar", color="#e7298a")
+    plt.title("Tasa de supervivencia por clase")
+    plt.xlabel("Clase (Pclass)")
+    plt.ylabel("Supervivencia (%)")
+    plt.ylim(0, 100)
+    plt.xticks(rotation=0)
+    plt.tight_layout()
+    plt.savefig(output_path / "supervivencia_por_clase.png")
+    plt.close()
+
+    # 4. Tasa de supervivencia por grupo de edad.
+    survival_by_age = dataframe.groupby("AgeGroup", observed=False)["Survived"].mean() * 100
+    plt.figure(figsize=(8, 5))
+    survival_by_age.plot(kind="bar", color="#66a61e")
+    plt.title("Tasa de supervivencia por grupo de edad")
+    plt.xlabel("Grupo de edad")
+    plt.ylabel("Supervivencia (%)")
+    plt.ylim(0, 100)
+    plt.xticks(rotation=0)
+    plt.tight_layout()
+    plt.savefig(output_path / "supervivencia_por_grupo_edad.png")
+    plt.close()
+
+    print(f"\nGráficas guardadas en: {output_path}")
+    for chart_path in sorted(output_path.glob("*.png")):
+        print(f"- {chart_path}")
 
 
 def main():
@@ -110,6 +173,9 @@ def main():
     fare_summary[["Media", "Mediana"]] = fare_summary[["Media", "Mediana"]].round(2)
     print("\nComparación de la tarifa Fare entre supervivientes y no supervivientes")
     print(fare_summary.to_string())
+
+    output_path = project_path / "outputs" / "resultados"
+    save_survival_charts(df, output_path)
 
 
 if __name__ == "__main__":
