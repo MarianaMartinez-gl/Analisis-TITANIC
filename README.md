@@ -1,18 +1,7 @@
-# Análisis Exploratorio del Dataset Titanic
-
-## Nombre del proyecto
-
 **Análisis Exploratorio de Datos del Titanic**
 
 Este proyecto realiza un análisis exploratorio del dataset **Titanic**, utilizando Python y diferentes técnicas de análisis y visualización de datos. El objetivo es conocer las características de los pasajeros del Titanic e identificar patrones relacionados con su supervivencia.
 
-> **Nota:** En este proyecto no se utiliza ningún modelo de Machine Learning. Únicamente se realiza análisis exploratorio de datos.
-
----
-
-## Dataset
-
-### Nombre del dataset
 
 **Titanic — train.csv**
 
